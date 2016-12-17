@@ -1,0 +1,49 @@
+{
+	"builders": [
+		{
+			"type": "virtualbox-iso",
+			"keep_registered": "false",
+			"guest_os_type": "Windows2012_64",
+			"guest_additions_mode": "disable",
+			"iso_url": "C:/Packer/iso/en_windows_server_2012_r2.iso",
+			"iso_checksum": "78BFF6565F178ED08AB534397FE44845",
+			"iso_checksum_type": "md5",
+			"disk_size": 25000,
+			"vboxmanage": [
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--memory",
+					"2048"
+				],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--cpus",
+					"2"
+				]
+			],
+			"floppy_files": [
+				"answer/2012_r2/Autounattend.xml",
+				"scripts/FirstLogonSetup.ps1"
+			],
+			"boot_wait": "15s",
+			"communicator": "winrm",
+			"winrm_timeout": "4h",
+			"winrm_username": "Administrator",
+			"winrm_password": "build",
+			"shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:A:/Autounattend.xml /shutdown",
+			"shutdown_timeout": "15m",
+			"post_shutdown_delay":"30s"
+		}
+	],
+	"provisioners":[
+		{
+			"type": "powershell",
+			"script": "scripts/InstallChocolatey.ps1"
+		},
+		{
+			"type":"windows-restart"
+		}
+	]
+}
