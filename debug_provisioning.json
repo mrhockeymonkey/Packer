@@ -1,0 +1,23 @@
+{
+	"Builders": [
+		{
+			"type": "null",
+			"communicator": "winrm",
+			"winrm_host": "192.168.56.101",
+			"winrm_username": "Administrator",
+			"winrm_password": "build"
+		}
+	],
+	"provisioners": [
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"environment_vars": [
+				"UpdateCategories=Critical Updates;Security Updates"
+			],
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
+		}
+	],
+	"post-processors": []
+}

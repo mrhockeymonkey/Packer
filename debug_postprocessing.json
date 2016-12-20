@@ -1,0 +1,29 @@
+{
+	"Builders": [
+		{
+			"type": "file",
+			"source": "img/goldimage.vmdk",
+			"target": "img/silverimage.vmdk"
+		}
+	],
+	"post-processors": [
+		[
+			{
+				"type": "shell-local",
+				"execute_command": "powershell.exe -noprofile -file {{.Script}} -Artifact {{.Artifact}} -Format VHD",
+				"script": "scripts/CloneVirtualDisk.ps1"
+			},
+			{
+				"type": "artifice",
+				"files": [
+					"img/silverimage.vhd"
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "powershell.exe -noprofile -file {{.Script}} -Artifact {{.Artifact}}",
+				"script": "scripts/CaptureWindowsImage.ps1"
+			}
+		]
+	]
+}
