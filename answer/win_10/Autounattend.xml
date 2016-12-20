@@ -17,7 +17,6 @@
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>
-                <Organization>GResearch</Organization>
             </UserData>
             <ImageInstall>
                 <OSImage>

@@ -5,7 +5,7 @@
 			"keep_registered": "true",
 			"guest_os_type": "Windows10_64",
 			"guest_additions_mode": "disable",
-			"iso_url": "D:/Images/iso/en-gb_windows_10_enterprise_version_1607_updated_jul_2016_x64_dvd_9057957.iso",
+			"iso_url": "iso/en-gb_windows_10_enterprise_version_1607_updated_jul_2016_x64_dvd_9057957.iso",
 			"iso_checksum": "C68DD7E00C08336342DA38F710C389B9",
 			"iso_checksum_type": "md5",
 			"disk_size": 25000,

@@ -1,2 +1,6 @@
-iso/*.iso
 *.log
+*.exe
+iso/*.iso
+output-virtualbox-iso
+packer-cache
+debug_artifacts
