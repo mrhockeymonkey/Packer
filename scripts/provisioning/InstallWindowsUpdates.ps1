@@ -29,12 +29,15 @@ Try {
     $TargetGroup = $env:TARGETGROUP
 	
 	#Disable auto-restart
-	Write-Host "Setting NoAutoRebootWithLoggedOnUser to 1"
 	If (!(Test-Path -Path $AU)){
 		New-Item -Path $(Split-Path -Parent $AU) -Name $(Split-Path -Leaf $AU) -ItemType Directory -Force -ErrorAction Stop | Out-Null
 	}
+	Write-Host "Setting NoAutoRebootWithLoggedOnUser to 1"
 	New-ItemProperty -Path $AU -Name 'NoAutoRebootWithLoggedOnUser' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
+	Write-Host "Setting UseWUServer to 1"
 	New-ItemProperty -Path $AU -Name 'UseWUServer' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
+	Write-Host "Setting NoAutoUpdate to 1"
+	New-ItemProperty -Path $AU -Name 'NoAutoUpdate' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
 	
     #Optionally set WUServer and TargetGroup
     If ($WUServer){
@@ -61,8 +64,10 @@ Try {
 	#Import and install updates
 	Write-Host "Importing $($PSWindowsUpdate.Name) ($($PSWindowsUpdate.Version))"
 	Import-Module -Name $PSWindowsUpdate.Name -ErrorAction Stop
-	Get-WUInstall -WindowsUpdate -AcceptAll -IgnoreReboot -Verbose
-    
+	
+    Write-Host "Installing windows updates..."
+    Get-WUInstall -WindowsUpdate -AcceptAll -IgnoreReboot -Verbose
+
 }
 Catch {
 	Write-Warning $_.Exception.Message
