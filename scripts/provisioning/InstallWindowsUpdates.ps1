@@ -4,10 +4,10 @@
 
 	.DESCRIPTION
 	Install windows updates using the PSWindowsUpdate module. You can optionally set
-    the Server and TargetGroup using environment variables
+	the Server and TargetGroup using environment variables
 
 	.EXAMPLE
-    "provisioners": [
+	"provisioners": [
 		{
 			"type": "powershell",
 			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
@@ -25,8 +25,8 @@ Try {
 	
 	$ProgressPreference = 'SilentlyContinue'
 	$AU = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
-    $WUServer = $env:WUSERVER
-    $TargetGroup = $env:TARGETGROUP
+	$WUServer = $env:WUSERVER
+	$TargetGroup = $env:TARGETGROUP
 	
 	#Disable auto-restart
 	If (!(Test-Path -Path $AU)){
@@ -39,21 +39,21 @@ Try {
 	Write-Host "Setting NoAutoUpdate to 1"
 	New-ItemProperty -Path $AU -Name 'NoAutoUpdate' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
 	
-    #Optionally set WUServer and TargetGroup
-    If ($WUServer){
-        Write-Host "Setting WUServer to $WUServer"
-        New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'WUServer' -Value $WUServer -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
-        New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'WUStatusServer' -Value $WUServer -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
-    }
-    If ($TargetGroup){
-        Write-Host "Setting TargetGroup to $TargetGroup"
-        New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'TargetGroup' -Value $TargetGroup -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
-        New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'TargetGroupEnabled' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
-    }
-    
-    #Force registry changes to take effect and restart service
-    & gpupdate.exe /target:computer /force
-    Get-Service -Name wuauserv -ErrorAction Stop | Restart-Service -ErrorAction Stop
+	#Optionally set WUServer and TargetGroup
+	If ($WUServer){
+		Write-Host "Setting WUServer to $WUServer"
+		New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'WUServer' -Value $WUServer -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
+		New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'WUStatusServer' -Value $WUServer -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
+	}
+	If ($TargetGroup){
+		Write-Host "Setting TargetGroup to $TargetGroup"
+		New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'TargetGroup' -Value $TargetGroup -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
+		New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'TargetGroupEnabled' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
+	}
+
+	#Force registry changes to take effect and restart service
+	& gpupdate.exe /target:computer /force
+	Get-Service -Name wuauserv -ErrorAction Stop | Restart-Service -ErrorAction Stop
 
 	#Check that PSWindowsUpdates is present
 	$PSWindowsUpdate = Get-Module -Name PSWindowsUpdate -ListAvailable
@@ -65,8 +65,8 @@ Try {
 	Write-Host "Importing $($PSWindowsUpdate.Name) ($($PSWindowsUpdate.Version))"
 	Import-Module -Name $PSWindowsUpdate.Name -ErrorAction Stop
 	
-    Write-Host "Installing windows updates..."
-    Get-WUInstall -WindowsUpdate -AcceptAll -IgnoreReboot -Verbose
+Write-Host "Installing windows updates..."
+Get-WUInstall -WindowsUpdate -AcceptAll -IgnoreReboot -Verbose
 
 }
 Catch {
