@@ -40,7 +40,9 @@
 	"provisioners": [
 		{
 			"type": "powershell",
-			"script": "scripts/provisioning/InstallChocolatey.ps1"
+			"script": "scripts/provisioning/InstallChocolatey.ps1",
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
 		},
 		{
 			"type": "windows-restart"
@@ -61,12 +63,21 @@
 			"type": "windows-restart"
 		},
 		{
-			"type":"powershell",
+			"type": "powershell",
 			"script": "scripts/provisioning/InstallPSModules.ps1",
-			"environment_vars":[
-				"RequiredProviders=Nuget;PowerShellGet",
+			"environment_vars": [
+				"RequiredProviders=Nuget;PowerShellGet,PSake",
 				"RequiredModules=PSWindowsUpdate;Pester"
 			]
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
+		},
+		{
+			"type": "windows-restart"
 		}
 	]
 }

@@ -12,11 +12,11 @@
 		{
 			"type": "powershell",
 			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
-			"environment_vars": [
-				"UpdateCategories=Critical Updates;Security Updates"
-			],
 			"elevated_user": "Administrator",
 			"elevated_password": "build"
+		},
+		{
+			"type":"windows-restart"
 		}
 	],
 	"post-processors": []
