@@ -32,11 +32,7 @@ Try {
 	If (!(Test-Path -Path $AU)){
 		New-Item -Path $(Split-Path -Parent $AU) -Name $(Split-Path -Leaf $AU) -ItemType Directory -Force -ErrorAction Stop | Out-Null
 	}
-	Write-Host "Setting NoAutoRebootWithLoggedOnUser to 1"
-	New-ItemProperty -Path $AU -Name 'NoAutoRebootWithLoggedOnUser' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
-	Write-Host "Setting UseWUServer to 1"
-	New-ItemProperty -Path $AU -Name 'UseWUServer' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
-	Write-Host "Setting NoAutoUpdate to 1"
+	Write-Host "Disabling Auto-Update"
 	New-ItemProperty -Path $AU -Name 'NoAutoUpdate' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
 	
 	#Optionally set WUServer and TargetGroup
@@ -44,6 +40,7 @@ Try {
 		Write-Host "Setting WUServer to $WUServer"
 		New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'WUServer' -Value $WUServer -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
 		New-ItemProperty -Path $(Split-Path -Path $AU) -Name 'WUStatusServer' -Value $WUServer -PropertyType 'String' -Force -ErrorAction Stop | Out-Null
+		New-ItemProperty -Path $AU -Name 'UseWUServer' -Value 1 -PropertyType 'DWord' -Force -ErrorAction Stop | Out-Null
 	}
 	If ($TargetGroup){
 		Write-Host "Setting TargetGroup to $TargetGroup"
@@ -53,7 +50,9 @@ Try {
 
 	#Force registry changes to take effect and restart service
 	& gpupdate.exe /target:computer /force
-	Get-Service -Name wuauserv -ErrorAction Stop | Restart-Service -ErrorAction Stop
+
+	#Stop WU service - this will strat again automatically when calling get-wuinstall below
+	Get-Service -Name wuauserv -ErrorAction Stop | Stop-Service -ErrorAction Stop
 
 	#Check that PSWindowsUpdates is present
 	$PSWindowsUpdate = Get-Module -Name PSWindowsUpdate -ListAvailable
@@ -61,13 +60,13 @@ Try {
 		Write-Error "PSWindowsUpdate module not found" -ErrorAction Stop
 	}
 
-	#Import and install updates
+	#Import and PSWindowSUpdate
 	Write-Host "Importing $($PSWindowsUpdate.Name) ($($PSWindowsUpdate.Version))"
 	Import-Module -Name $PSWindowsUpdate.Name -ErrorAction Stop
 	
-Write-Host "Installing windows updates..."
-Get-WUInstall -WindowsUpdate -AcceptAll -IgnoreReboot -Verbose
-
+	#install needed updates - by not specifying a service this will use the default
+	Write-Host "Installing windows updates..."
+	Get-WUInstall -AcceptAll -IgnoreReboot -Verbose -Debuger
 }
 Catch {
 	Write-Warning $_.Exception.Message
