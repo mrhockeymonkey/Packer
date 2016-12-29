@@ -27,13 +27,13 @@ Try {
 	#Install required providers
 	$Providers | ForEach-Object -Process {
 		Write-Host "Installing PackageProvider: $_"
-		Install-PackageProvider -Name $_ -ForceBootstrap -Force
+		Install-PackageProvider -Name $_ -ForceBootstrap -Force -ErrorAction Stop
 	}
 
 	#Install required modules
 	$Modules | ForEach-Object -Process {
 		Write-Host "Installing Module: $_"
-		Install-Module -Name $_ -Force
+		Install-Module -Name $_ -Force -ErrorAction Stop
 	} 
 }
 Catch {

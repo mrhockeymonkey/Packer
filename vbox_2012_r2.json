@@ -25,7 +25,7 @@
 			],
 			"floppy_files": [
 				"answer/2012_r2/Autounattend.xml",
-				"scripts/FirstLogonSetup.ps1"
+				"scripts/floppy/FirstLogonSetup.ps1"
 			],
 			"boot_wait": "15s",
 			"communicator": "winrm",
@@ -34,16 +34,57 @@
 			"winrm_password": "build",
 			"shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:A:/Autounattend.xml /shutdown",
 			"shutdown_timeout": "15m",
-			"post_shutdown_delay":"30s"
+			"post_shutdown_delay": "30s"
 		}
 	],
-	"provisioners":[
+	"provisioners": [
 		{
 			"type": "powershell",
-			"script": "scripts/InstallChocolatey.ps1"
+			"script": "scripts/provisioning/InstallChocolatey.ps1",
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
 		},
 		{
-			"type":"windows-restart"
+			"type": "powershell",
+			"inline": [
+				"choco install powershell",
+				"choco install dotnet4.6.2"
+			],
+			"elevated_user": "Administrator",
+			"elevated_password": "build",
+			"valid_exit_codes": [
+				0,
+				3010
+			]
+		},
+		{
+			"type": "windows-restart"
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallPSModules.ps1",
+			"environment_vars": [
+				"RequiredProviders=Nuget;PowerShellGet",
+				"RequiredModules=PSWindowsUpdate;Pester;PSake"
+			]
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
+		},
+		{
+			"type": "windows-restart"
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
+		},
+		{
+			"type": "windows-restart"
 		}
 	]
 }

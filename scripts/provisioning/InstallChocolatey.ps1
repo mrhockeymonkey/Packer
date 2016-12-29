@@ -23,6 +23,9 @@ Param ()
 Try {
 	#Install chocolatey
 	Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+
+	#Set allowGlobalConfirmation
+	C:\ProgramData\chocolatey\choco.exe feature enable -n=allowGlobalConfirmation
 }
 Catch {
 	Write-Warning $_.Exception.Message

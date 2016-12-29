@@ -45,9 +45,6 @@
 			"elevated_password": "build"
 		},
 		{
-			"type": "windows-restart"
-		},
-		{
 			"type": "powershell",
 			"inline": [
 				"choco install powershell -y"
@@ -66,9 +63,18 @@
 			"type": "powershell",
 			"script": "scripts/provisioning/InstallPSModules.ps1",
 			"environment_vars": [
-				"RequiredProviders=Nuget;PowerShellGet,PSake",
-				"RequiredModules=PSWindowsUpdate;Pester"
+				"RequiredProviders=Nuget;PowerShellGet",
+				"RequiredModules=PSWindowsUpdate;Pester;PSake"
 			]
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"elevated_user": "Administrator",
+			"elevated_password": "build"
+		},
+		{
+			"type": "windows-restart"
 		},
 		{
 			"type": "powershell",
