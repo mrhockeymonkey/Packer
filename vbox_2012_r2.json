@@ -25,14 +25,15 @@
 			],
 			"floppy_files": [
 				"answer/2012_r2/Autounattend.xml",
-				"scripts/floppy/FirstLogonSetup.ps1"
+				"scripts/floppy/FirstLogonSetup.ps1",
+				"scripts/floppy/SysPrep.bat"
 			],
 			"boot_wait": "15s",
 			"communicator": "winrm",
 			"winrm_timeout": "4h",
 			"winrm_username": "Administrator",
 			"winrm_password": "build",
-			"shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:A:/Autounattend.xml /shutdown",
+			"shutdown_command": "A:/SysPrep.bat",
 			"shutdown_timeout": "15m",
 			"post_shutdown_delay": "30s"
 		}
