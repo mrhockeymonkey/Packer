@@ -1,0 +1,1 @@
+C:\Windows\System32\SysPrep\sysprep.exe /generalize /oobe /shutdown

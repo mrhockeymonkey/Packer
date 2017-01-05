@@ -109,5 +109,5 @@
             </FirstLogonCommands>
         </component>
     </settings>
-    <cpi:offlineImage cpi:source="wim:d:/images/iso/windows_10/sources/install.wim#Windows 10 Enterprise" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+    <cpi:offlineImage cpi:source="catalog:c:/packer/iso/install_windows 10 enterprise.clg" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>

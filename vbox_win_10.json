@@ -24,15 +24,16 @@
 				]
 			],
 			"floppy_files": [
-				"answer/windows_10/Autounattend.xml",
-				"scripts/floppy/FirstLogonSetup.ps1"
+				"answer/win_10/Autounattend.xml",
+				"scripts/floppy/FirstLogonSetup.ps1",
+				"scripts/floppy/SysPrep.bat"
 			],
 			"boot_wait": "15s",
 			"communicator": "winrm",
 			"winrm_timeout": "4h",
 			"winrm_username": "Administrator",
 			"winrm_password": "build",
-			"shutdown_command": "C:/windows/system32/shutdown.exe -s -t 0",
+			"shutdown_command": "A:/SysPrep.bat",
 			"shutdown_timeout": "15m",
 			"post_shutdown_delay": "30s"
 		}

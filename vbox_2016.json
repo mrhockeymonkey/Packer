@@ -1,0 +1,40 @@
+{
+	"builders": [
+		{
+			"type": "virtualbox-iso",
+			"keep_registered": "true",
+			"guest_os_type": "Windows2012_64",
+			"guest_additions_mode": "disable",
+			"iso_url": "C:/Packer/iso/en_windows_server_2016_x64_dvd_9327751.iso",
+			"iso_checksum": "91D7B2EBCFF099B3557570AF7A8A5CD6",
+			"iso_checksum_type": "md5",
+			"disk_size": 25000,
+			"vboxmanage": [
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--memory",
+					"2048"
+				],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--cpus",
+					"2"
+				]
+			],
+			"floppy_files": [
+				"answer/2016/Autounattend.xml",
+				"scripts/floppy/FirstLogonSetup.ps1"
+			],
+			"boot_wait": "15s",
+			"communicator": "winrm",
+			"winrm_timeout": "4h",
+			"winrm_username": "Administrator",
+			"winrm_password": "build",
+			"shutdown_command": "C:/windows/system32/shutdown.exe -s -t 0",
+			"shutdown_timeout": "15m",
+			"post_shutdown_delay": "30s"
+		}
+	]
+}

@@ -15,7 +15,7 @@
             <UserData>
                 <ProductKey>
                     <WillShowUI>OnError</WillShowUI>
-                    <Key>D2N9P-3P6X9-2R39C-7RTCD-MDVJX</Key>
+                    <Key>WC2BQ-8NRM3-FDDYY-2BFGV-KHKQY</Key>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>
                 <FullName></FullName>
@@ -84,7 +84,6 @@
                 <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
                 <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <NetworkLocation>Home</NetworkLocation>
                 <ProtectYourPC>1</ProtectYourPC>
             </OOBE>
             <TimeZone>UTC</TimeZone>
@@ -124,5 +123,5 @@
             <SkipRearm>1</SkipRearm>
         </component>
     </settings>
-    <cpi:offlineImage cpi:source="catalog:c:/packer/iso/install_windows server 2012 r2 serverstandard.clg" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+    <cpi:offlineImage cpi:source="catalog:c:/packer/iso/install_windows server 2016 serverstandard.clg" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>

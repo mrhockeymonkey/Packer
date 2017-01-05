@@ -1,5 +1,6 @@
 *.log
 *.exe
+*.clg
 iso/*.iso
 output-virtualbox-iso
 packer-cache
