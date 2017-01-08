@@ -2,7 +2,7 @@
 The purpose of this repo is to enable regular creation of golden images, in this case, in the form of .wim files.
 
 ## Environment Setup
-```
+```powershell
 #Create a copy of powershell.exe called sh.exe (this is to trick the local-shell postprocessor into working)
 Push-Location -Path $env:windir\System32\WindowsPowerShell\v1.0
 Copy-Item -Path .\powershell.exe -Destination sh.exe
