@@ -1,23 +1,17 @@
+# Packer
+The purpose of this repo is to enable regular creation of golden images, in this case, in the form of .wim files.
 
-
-## Enable logging
+## Environment Setup
 ```
+#Create a copy of powershell.exe called sh.exe (this is to trick the local-shell postprocessor into working)
+Push-Location -Path $env:windir\System32\WindowsPowerShell\v1.0
+Copy-Item -Path .\powershell.exe -Destination sh.exe
+Pop-Location
+
+#Enable logging
 $env:PACKER_LOG=1
 $env:PACKER_LOG_PATH="packer.log"
 ```
 
-## Keeping VM Registered
-Sometimes it is very hand to keep the build VM registered for debugging. 
-To keep a VM registered there are two settings you can alternate between. 
-
-**Keep**
-```
-"keep_registered": "true"
-"shutdown_command": "C:/windows/system32/shutdown.exe -s -t 0"
-```
-
-**Remove**
-```
-"keep_registered": "false"
-"shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:A:/Autounattend.xml /shutdown"
-```
+You will also need a copy of the iso images used in each template. If using different images remeber to replace the checksum
+for each under variables. 
