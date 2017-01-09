@@ -11,9 +11,12 @@
 	"post-processors": [
 		{
 			"type":"shell-local",
-			"execute_command":"powershell.exe -noprofile -file {{.Script}} -Artifact {{.Artifact}} -Format VHD",
+			"execute_command": "{{.Script}} -Artifact {{.Artifact}} -Format VHD",
 			"script": "scripts/CloneVirtualDisk.ps1"
 		}
+
+	.NOTES
+	This assume you have copied powershell.exe to sh.exe to make shell-local useable on windows
 #>
 
 [CmdletBinding()]

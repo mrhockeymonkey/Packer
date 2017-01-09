@@ -1,5 +1,7 @@
 # Packer
 The purpose of this repo is to enable regular creation of golden images, in this case, in the form of .wim files.
+Each packer template will install windows, provision as instructed and the proceed to capture a windows image. This is done by 
+first convert the resultant .vmdk file to .vhd and then captureing the image using dism
 
 ## Environment Setup
 ```powershell
@@ -15,3 +17,8 @@ $env:PACKER_LOG_PATH="packer.log"
 
 You will also need a copy of the iso images used in each template. If using different images remeber to replace the checksum
 for each under variables. 
+
+## Example Breakdown
+```json
+
+```

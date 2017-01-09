@@ -1,12 +1,18 @@
 {
+	"variables" : {
+		"vm_name" : "server_2012_r2_x64_{{timestamp}}",
+		"iso_url": "iso/en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso",
+		"iso_checksum": "78BFF6565F178ED08AB534397FE44845"
+	},
 	"builders": [
 		{
 			"type": "virtualbox-iso",
-			"keep_registered": "false",
+			"vm_name" : "{{user `vm_name`}}",
+			"keep_registered": "true",
 			"guest_os_type": "Windows2012_64",
 			"guest_additions_mode": "disable",
-			"iso_url": "C:/Packer/iso/en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso",
-			"iso_checksum": "78BFF6565F178ED08AB534397FE44845",
+			"iso_url": "{{ user `iso_url`}}",
+			"iso_checksum": "{{ user `iso_checksum`}}",
 			"iso_checksum_type": "md5",
 			"disk_size": 25000,
 			"vboxmanage": [
@@ -49,7 +55,7 @@
 			"type": "powershell",
 			"inline": [
 				"choco install powershell",
-				"choco install dotnet4.6.2"
+				"choco install dotnet4.6.1"
 			],
 			"elevated_user": "Administrator",
 			"elevated_password": "build",
@@ -76,7 +82,8 @@
 			"elevated_password": "build"
 		},
 		{
-			"type": "windows-restart"
+			"type": "windows-restart",
+			"restart_timeout": "20m"
 		},
 		{
 			"type": "powershell",
@@ -85,7 +92,34 @@
 			"elevated_password": "build"
 		},
 		{
-			"type": "windows-restart"
+			"type": "windows-restart",
+			"restart_timeout": "20m"
 		}
+	],
+	"post-processors": [
+		[
+			{
+				"type": "artifice",
+				"files": [
+					"{{user `vm_name`}}-disk1.vmdk"
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Artifact {{.Artifact}} -Format VHD",
+				"script": "scripts/postprocessing/CloneVirtualDisk.ps1"
+			},
+			{
+				"type": "artifice",
+				"files": [
+					"{{user `vm_name`}}-disk1.vhd"
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Artifact {{.Artifact}}",
+				"script": "scripts/postprocessing/CaptureWindowsImage.ps1"
+			}
+		]
 	]
 }

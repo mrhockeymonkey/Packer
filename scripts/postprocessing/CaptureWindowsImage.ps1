@@ -9,10 +9,13 @@
 	.EXAMPLE
 	"post-processors": [
 		{
-			"type":"shell-local",
-			"execute_command":"powershell.exe -noprofile -File {{.Script}} -Artifact {{.Artifact}}",
-			"script": "scripts/CaptureWindowsImage.ps1"
+			"type": "shell-local",
+			"execute_command": "{{.Script}} -Artifact {{.Artifact}}",
+			"script": "scripts/postprocessing/CaptureWindowsImage.ps1"
 		}
+
+	.NOTES
+	This assume you have copied powershell.exe to sh.exe to make shell-local useable on windows
 #>
 
 [CmdletBinding()]

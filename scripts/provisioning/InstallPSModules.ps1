@@ -19,6 +19,9 @@
 		}
 #>
 
+$ProgressPreference = 'SilentlyContinue'
+$OSMajorVersion = [Environment]::OSVersion.Version.Major
+
 Try {
 	
 	$Providers = $env:RequiredProviders -split ';' 
@@ -33,7 +36,12 @@ Try {
 	#Install required modules
 	$Modules | ForEach-Object -Process {
 		Write-Host "Installing Module: $_"
-		Install-Module -Name $_ -Force -ErrorAction Stop
+		If ($OSMajorVersion -ge 10) {
+			Install-Module -Name $_ -Force -SkipPublisherCheck -ErrorAction Stop
+		}
+		Else {
+			Install-Module -Name $_ -Force -ErrorAction Stop
+		}
 	} 
 }
 Catch {

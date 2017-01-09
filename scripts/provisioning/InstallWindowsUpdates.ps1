@@ -21,6 +21,8 @@
 	]
 #>
 
+$ProgressPreference = 'SilentlyContinue'
+
 Try {
 	
 	$ProgressPreference = 'SilentlyContinue'

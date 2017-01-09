@@ -11,6 +11,8 @@
 		{
 			"type": "powershell",
 			"script": "scripts/InstallChocolatey.ps1"
+			"elevated_user": "Administrator",
+			"elevated_password": "<Password>"
 		},
 		{
 			"type":"windows-restart"
@@ -19,6 +21,8 @@
 
 [CmdletBinding()]
 Param ()
+
+$ProgressPreference = 'SilentlyContinue'
 
 Try {
 	#Install chocolatey
