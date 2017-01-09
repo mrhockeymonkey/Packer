@@ -8,7 +8,7 @@
 		{
 			"type": "virtualbox-iso",
 			"vm_name" : "{{user `vm_name`}}",
-			"keep_registered": "true",
+			"keep_registered": "false",
 			"guest_os_type": "Windows2012_64",
 			"guest_additions_mode": "disable",
 			"iso_url": "{{ user `iso_url`}}",

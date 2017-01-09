@@ -17,8 +17,3 @@ $env:PACKER_LOG_PATH="packer.log"
 
 You will also need a copy of the iso images used in each template. If using different images remeber to replace the checksum
 for each under variables. 
-
-## Example Breakdown
-```json
-
-```
