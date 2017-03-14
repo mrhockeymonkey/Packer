@@ -12,7 +12,7 @@
 Properties {
 	$File       = "$PSScriptRoot\vbox_win_10.json"
 	$Packer     = "$env:ProgramData\Packer\Packer.exe"
-	$VBoxManage = "$env:ProgramFiles\Oracle\VirtualBox\VBoxManage.exe"
+	$VBoxManage = "$env:ProgramW6432\Oracle\VirtualBox\VBoxManage.exe"
 }
 
 #Standard default task
