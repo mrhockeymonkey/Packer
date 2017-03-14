@@ -1,8 +1,8 @@
 {
 	"variables": {
 		"vm_name": "windows_10_ent_x64_{{timestamp}}",
-		"iso_url": "D:/Packer/iso/en-gb_windows_10_enterprise_version_1607_updated_jul_2016_x64_dvd_9057957.iso",
-		"iso_checksum": "C68DD7E00C08336342DA38F710C389B9"
+		"iso_url": "D:/Packer/iso/en-gb_windows_10_enterprise_version_1607_updated_jan_2017_x64_dvd_9714391.iso",
+		"iso_checksum": "E2B75A24CD9D953056D8AA09982C4281"
 	},
 	"builders": [
 		{

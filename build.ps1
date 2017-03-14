@@ -4,9 +4,16 @@
 
 	.DESCRIPTION
 	This script is used as part of a CI job to invoke packer (in this case using Jenkins)
-	To add this as a build step, add the powershell plugin and call this script using:
+		
+	.EXAMPLE
+	To setup jenkins to invoke the VBoxBuild task list use:
+
 		Import-Module PSake
 		Invoke-PSake -BuildFile "$env:Workspace\Build.ps1 -TaskList VBoxBuild -NoLogo
+		If ($PSake.Build_success -ne $true){
+			throw "PSake Build did not succeed"
+		}
+}
 #>
 
 Properties {
