@@ -1,0 +1,28 @@
+{% extends "template_windows_10.json" %}
+
+{% block apps %}
+		{
+			"type": "powershell",
+			"inline": "choco install chrome",
+			"elevated_user": "{{ user `vm_user`}}",
+			"elevated_password": "{{ user `vm_pass`}}"
+		},
+		{
+			"type": "powershell",
+			"inline": "choco install adobereader",
+			"elevated_user": "{{ user `vm_user`}}",
+			"elevated_password": "{{ user `vm_pass`}}"
+		},
+		{
+			"type": "powershell",
+			"inline": "choco install notepadplusplus",
+			"elevated_user": "{{ user `vm_user`}}",
+			"elevated_password": "{{ user `vm_pass`}}"
+		},
+		{
+			"type": "powershell",
+			"inline": "choco install git",
+			"elevated_user": "{{ user `vm_user`}}",
+			"elevated_password": "{{ user `vm_pass`}}"
+		},
+{% endblock %}

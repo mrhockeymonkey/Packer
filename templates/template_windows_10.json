@@ -1,17 +1,17 @@
 {
-	"variables" : {
-		"vm_name" : "server_2012_r2_x64_{{timestamp}}",
+	"variables": {
+		"vm_name": "windows_10_ent_x64_{{timestamp}}",
 		"vm_user": "Administrator",
 		"vm_pass": "Pa$$w0rd",
-		"iso_url": "iso/en_windows_server_2012_r2_with_update_x64_dvd_6052708.iso",
-		"iso_checksum": "78BFF6565F178ED08AB534397FE44845"
+		"iso_url": "D:/Packer/iso/en-gb_windows_10_enterprise_version_1607_updated_jan_2017_x64_dvd_9714391.iso",
+		"iso_checksum": "E2B75A24CD9D953056D8AA09982C4281"
 	},
 	"builders": [
 		{
 			"type": "virtualbox-iso",
-			"vm_name" : "{{user `vm_name`}}",
+			"vm_name": "{{ user `vm_name`}}",
 			"keep_registered": "false",
-			"guest_os_type": "Windows2012_64",
+			"guest_os_type": "Windows10_64",
 			"guest_additions_mode": "disable",
 			"iso_url": "{{ user `iso_url`}}",
 			"iso_checksum": "{{ user `iso_checksum`}}",
@@ -32,7 +32,7 @@
 				]
 			],
 			"floppy_files": [
-				"answer/2012_r2/Autounattend.xml",
+				"answer/win_10/Autounattend.xml",
 				"scripts/floppy/FirstLogonSetup.ps1",
 				"scripts/floppy/SysPrep.bat"
 			],
@@ -55,26 +55,10 @@
 		},
 		{
 			"type": "powershell",
-			"inline": [
-				"choco install powershell",
-				"choco install dotnet4.6.1"
-			],
-			"elevated_user": "{{ user `vm_user`}}",
-			"elevated_password": "{{ user `vm_pass`}}",
-			"valid_exit_codes": [
-				0,
-				3010
-			]
-		},
-		{
-			"type": "windows-restart"
-		},
-		{
-			"type": "powershell",
 			"script": "scripts/provisioning/InstallPSModules.ps1",
 			"environment_vars": [
 				"RequiredProviders=Nuget;PowerShellGet",
-				"RequiredModules=PSWindowsUpdate;Pester;PSake"
+				"RequiredModules=PSWindowsUpdate"
 			]
 		},
 		{
@@ -87,6 +71,7 @@
 			"type": "windows-restart",
 			"restart_timeout": "20m"
 		},
+		{% block apps %}{% endblock %}
 		{
 			"type": "powershell",
 			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
@@ -103,7 +88,7 @@
 			{
 				"type": "artifice",
 				"files": [
-					"{{user `vm_name`}}-disk1.vmdk"
+					"output-virtualbox-iso/{{user `vm_name`}}-disk1.vmdk"
 				]
 			},
 			{
@@ -114,7 +99,7 @@
 			{
 				"type": "artifice",
 				"files": [
-					"{{user `vm_name`}}-disk1.vhd"
+					"output-virtualbox-iso/{{user `vm_name`}}-disk1.vhd"
 				]
 			},
 			{
