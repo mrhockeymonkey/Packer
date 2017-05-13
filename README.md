@@ -28,7 +28,7 @@ for each under variables.
 A list of things i plan to add to this repo
 
 - [x] Jinja2 Templating to reduce code duplication
-- [] Find a better way to run powershell in post-processing, creating sh.exe is digusting
-- [] Use a CI engine to build images
-- [] Run pester tests on built box to verify state before sysprep
+- [ ] Find a better way to run powershell in post-processing, creating sh.exe is digusting
+- [ ] Use a CI engine to build images
+- [ ] Run pester tests on built box to verify state before sysprep
 
