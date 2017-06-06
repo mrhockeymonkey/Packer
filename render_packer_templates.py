@@ -12,6 +12,18 @@ import subprocess
 script_path = os.path.dirname(os.path.abspath(__file__))
 template_folder = os.path.join(script_path, 'templates')
 template_files = ['win_10_standard.json', 'win_10_developer.json']
+serverbuilds = ['generic','appserver']
+apps = {
+    'everywhere':[
+        '7-zip'
+    ],
+    'server_only':[
+        ''
+    ],
+    'appserver':[
+    
+    ]
+}
 
 #Create jinja2 environment
 env = jinja2.Environment(
