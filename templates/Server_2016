@@ -1,0 +1,249 @@
+{
+	"variables": {
+		"iso_url": "D:/Images/iso/en_windows_server_2016_x64_dvd_9327751.iso",
+		"iso_checksum": "91D7B2EBCFF099B3557570AF7A8A5CD6",
+		"sxs_folder": "D:/Images/iso/en_windows_server_2016_x64_dvd_9327751/sources/sxs",
+		"admin_user": "Administrator",
+		"admin_pass": "pa$$w0rd",
+		"timestamp": "{{timestamp}}"
+	},
+	"builders": [
+	{% for item in serverbuilds %}
+		{
+			"name": "server_2016_{{{ item }}}",
+			"type": "virtualbox-iso",
+			"keep_registered": "false",
+			"guest_os_type": "Windows10_64",
+			"guest_additions_mode": "disable",
+			"iso_url": "{{ user `iso_url` }}",
+			"iso_checksum": "{{ user `iso_checksum` }}",
+			"iso_checksum_type": "md5",
+			"disk_size": 25000,
+			"vm_name": "server_2016_{{{ item }}}_{{ user `timestamp`}}",
+			"vboxmanage": [
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--memory",
+					"2048"
+				],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--cpus",
+					"4"
+				],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--audio",
+					"null"
+				]
+			],
+			"floppy_files": [
+				"answer/server_2016/Autounattend.xml",
+				"scripts/floppy/FirstLogonSetup.ps1",
+				"scripts/floppy/RootCA.cer",
+				"scripts/floppy/sysprep.bat"
+			],
+			"communicator": "winrm",
+			"winrm_timeout": "4h",
+			"winrm_username": "{{ user `admin_user`}}",
+			"winrm_password": "{{ user `admin_pass`}}",
+			"shutdown_command": "A:/sysprep.bat",
+			"shutdown_timeout": "15m",
+			"post_shutdown_delay": "60s"
+		}
+		{% if loop.last %}
+		{% else %}
+		,
+		{% endif %}
+	{% endfor %}
+	],
+	"provisioners": [
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallRootCACert.ps1",
+			"elevated_user": "{{ user `admin_user`}}",
+			"elevated_password": "{{ user `admin_pass`}}",
+			"environment_vars": [
+				"CertPath=A:/RootCA.cer"
+			]
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallChocolatey.ps1",
+			"elevated_user": "{{ user `admin_user`}}",
+			"elevated_password": "{{ user `admin_pass`}}",
+			"environment_vars": [
+				"Version=0.10.3",
+			]
+		},
+		{
+			"type": "windows-restart"
+		},
+
+		{% for item in apps['everywhere'] %}
+		{
+			"type": "powershell",
+			"inline": "choco install {{{ item }}}",
+			"elevated_user": "{{ user `admin_user`}}",
+			"elevated_password": "{{ user `admin_pass`}}",
+			"valid_exit_codes":[
+				0,
+				3010
+			]
+		},
+		{% endfor %}
+		{
+			"type": "windows-restart",
+			"restart_timeout": "30m"
+		},
+		{% for item in apps['server_only'] %}
+		{
+			"type": "powershell",
+			"inline": "choco install {{{ item }}}",
+			"elevated_user": "{{ user `admin_user`}}",
+			"elevated_password": "{{ user `admin_pass`}}",
+			"valid_exit_codes":[
+				0,
+				3010
+			]
+		},
+		{% endfor %}
+
+		{
+			"type": "windows-restart"
+		},
+
+		{% for item in apps['appserver'] %}
+			{
+				"only": ["server_2016_appserver"],
+				"type": "powershell",
+				"inline": "choco install {{{ item }}}",
+				"elevated_user": "{{ user `admin_user`}}",
+				"elevated_password": "{{ user `admin_pass`}}",
+				"valid_exit_codes":[
+					0,
+					3010
+				]
+			},
+		{% endfor %}
+
+		{
+			"type": "windows-restart"
+		},
+
+		{
+			"type": "powershell",
+			"inline": [
+				"Get-WindowsFeature Windows-Defender-Features | Remove-WindowsFeature",
+				"Get-WindowsFeature RSAT-AD-Tools | Install-WindowsFeature -IncludeAllSubFeature",
+				"Get-WindowsFeature SNMP-Service | Install-WindowsFeature"
+			]
+		},
+		{
+			"type": "windows-restart"
+		}, 
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"elevated_user": "{{ user `admin_user`}}",
+			"elevated_password": "{{ user `admin_pass`}}",
+			"environment_vars": [
+				"WUSERVER=https://wsus.eqld.sites.uberit.net:8531",
+				"TARGETGROUP=Workstations"
+			]
+		},
+		{
+			"type": "windows-restart",
+			"restart_timeout": "30m"
+		},
+		{
+			"type": "powershell",
+			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
+			"elevated_user": "{{ user `admin_user`}}",
+			"elevated_password": "{{ user `admin_pass`}}",
+			"environment_vars": [
+				"WUSERVER=https://wsus.eqld.sites.uberit.net:8531",
+				"TARGETGROUP=Workstations"
+			]
+		},
+		{
+			"type": "windows-restart",
+			"restart_timeout": "30m"
+		}
+	],
+	"post-processors": [
+		[
+			{
+				"type": "artifice",
+				"files": [
+					{% for item in serverbuilds %}
+						"output-server_2016_{{{item}}}/server_2016_{{{item}}}_{{ user `timestamp`}}-disk1.vmdk"
+						{% if loop.last %}
+						{% else %}
+						,
+						{% endif %}
+					{% endfor %}
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Artifact {{.Artifact}} -Format VHD",
+				"script": "scripts/postprocessing/CloneVirtualDisk.ps1"
+			},
+			{
+				"type": "artifice",
+				"files": [
+					{% for item in serverbuilds %}
+						"output-server_2016_{{{item}}}/server_2016_{{{item}}}_{{ user `timestamp`}}-disk1.vhd"
+						{% if loop.last %}
+						{% else %}
+						,
+						{% endif %}
+					{% endfor %}
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Artifact {{.Artifact}}",
+				"script": "scripts/postprocessing/CaptureWindowsImage.ps1"
+			},
+			{
+				"type": "artifice",
+				"files": [
+					{% for item in serverbuilds %}
+						"output-server_2016_{{{item}}}/server_2016_{{{item}}}_{{ user `timestamp`}}-disk1.wim"
+						{% if loop.last %}
+						{% else %}
+						,
+						{% endif %}
+					{% endfor %}
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Artifact {{.Artifact}} -SxsFolder {{ user `sxs_folder` }} -Operation 'Enable' -Feature 'NetFx3'",
+				"script": "scripts/postprocessing/WindowsOptionalFeature.ps1"
+			},
+			{
+				"type": "artifice",
+				"files": [
+					{% for item in serverbuilds %}
+						"output-server_2016_{{{item}}}/server_2016_{{{item}}}_{{ user `timestamp`}}-disk1.wim"
+						{% if loop.last %}
+						{% else %}
+						,
+						{% endif %}
+					{% endfor %}
+				]
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Artifact {{.Artifact}} -SxsFolder {{ user `sxs_folder` }} -Operation 'Remove' -Feature 'MicrosoftWindowsPowerShellV2','MicrosoftWindowsPowerShellV2Root'",
+				"script": "scripts/postprocessing/WindowsOptionalFeature.ps1"
+			}
+		]
+	]
+}
