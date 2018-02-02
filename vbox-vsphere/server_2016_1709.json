@@ -1,0 +1,54 @@
+{
+	"variables": {
+		"vm_name": "server_2016_1709_{{timestamp}}",
+		"vm_user": "Administrator",
+		"vm_pass": "build",
+		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",
+		"iso_checksum": "3B93DBC1C13A223B543483F0DCB52587",
+		"iso_checksum_type": "md5"
+	},
+	"builders": [
+		{
+			"type": "virtualbox-iso",
+			"keep_registered": "false",
+			"guest_os_type": "Windows2016_64",
+			"guest_additions_mode": "disable",
+			"iso_url": "{{ user `iso_url`}}",
+			"iso_checksum": "{{ user `iso_checksum`}}",
+			"iso_checksum_type": "{{ user `iso_checksum_type`}}",
+			"disk_size": 25000,
+			"vboxmanage": [
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--memory",
+					"2048"
+				],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--cpus",
+					"2"
+				]
+			],
+			"floppy_files": [
+				"answer/2016_1709/Autounattend.xml",
+				"scripts/floppy/FirstLogonSetup.ps1"
+			],
+			"boot_wait": "15s",
+			"communicator": "winrm",
+			"winrm_timeout": "4h",
+			"winrm_username": "{{ user `vm_user`}}",
+			"winrm_password": "{{ user `vm_pass`}}",
+			"shutdown_command": "C:/windows/system32/shutdown.exe -s -t 0",
+			"shutdown_timeout": "15m",
+			"post_shutdown_delay": "30s"
+		}
+	],
+	"provisioners": [
+
+	],
+	"post-processors": [
+
+	]
+}
