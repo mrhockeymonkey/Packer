@@ -1,0 +1,54 @@
+{
+	"variables": {
+		"vm_name": "server_2016_1709_{{timestamp}}",
+		"vm_user": "Administrator",
+		"vm_pass": "build",
+		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",
+		"iso_checksum": "3B93DBC1C13A223B543483F0DCB52587",
+		"iso_checksum_type": "md5"
+	},
+	"builders": [
+		{
+			"type": "vmware-iso",
+			"keep_registered": "false",
+			"version": 14,
+			"guest_os_type": "windows9srv-64",
+			"iso_url": "{{ user `iso_url`}}",
+			"iso_checksum": "{{ user `iso_checksum`}}",
+			"iso_checksum_type": "{{ user `iso_checksum_type`}}",
+			"disk_size": 25000,
+			"vmx_data": {
+				"memsize": 2048,
+				"numvcpus": 2,
+				"scsi0.virtualDev": "lsisas1068"
+			},
+			"floppy_files": [
+				"answer/2016_1709/Autounattend.xml",
+				"scripts/floppy/FirstLogonSetup.ps1"
+			],
+			"boot_wait": "15s",
+			"communicator": "winrm",
+			"winrm_timeout": "4h",
+			"winrm_username": "{{ user `vm_user`}}",
+			"winrm_password": "{{ user `vm_pass`}}",
+			"shutdown_command": "C:/windows/system32/shutdown.exe -s -t 0",
+			"shutdown_timeout": "15m"
+		}
+	],
+	"provisioners": [
+
+	],
+	"post-processors": [
+		{
+			"type" : "vsphere",
+			"cluster" : "ILAB Cluster 01",
+			"datacenter" : "ILAB",
+			"datastore" : "vsanDatastore",
+			"host" : "lavvc1",
+			"password" : "BuildM3Up!",
+			"username" : "infra-packer",
+			"vm_name" : "smtemplate",
+			"insecure" : "true"
+		  }
+	]
+}
