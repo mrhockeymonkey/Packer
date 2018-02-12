@@ -12,7 +12,7 @@
 		{
 			"type":"shell-local",
 			"execute_command": "{{.Script}} -Artifact {{.Artifact}} -Format VHD",
-			"script": "scripts/CloneVirtualDisk.ps1"
+			"script": "scripts/postprocessing/CloneVirtualDisk.ps1"
 		}
 
 	.NOTES

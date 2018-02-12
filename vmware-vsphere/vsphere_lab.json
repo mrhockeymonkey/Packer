@@ -1,0 +1,10 @@
+{
+	"vsphere_host": "lavvc1",
+	"vsphere_insecure": "true",
+	"vsphere_datacenter": "ILAB",
+	"vsphere_cluster": "ILAB Cluster 01",
+	"vsphere_datastore": "vsanDatastore",
+	"vsphere_folder": "Infrastructure",
+	"vsphere_network": "ILAB_INFRA",
+	"vsphere_user": "infra-packer"
+}

@@ -1,22 +1,32 @@
 {
 	"variables": {
-		"vm_name": "server_2016_1709_{{timestamp}}",
+		"vm_name": "tmplt-2016-1709",
 		"vm_user": "Administrator",
 		"vm_pass": "build",
 		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",
 		"iso_checksum": "3B93DBC1C13A223B543483F0DCB52587",
-		"iso_checksum_type": "md5"
+		"iso_checksum_type": "md5",
+		"vsphere_host": null,
+		"vsphere_insecure": null,
+		"vsphere_datacenter": null,
+		"vsphere_cluster": null,
+		"vsphere_datastore": null,
+		"vsphere_folder": null,
+		"vsphere_network": null,
+		"vsphere_pass": null
 	},
 	"builders": [
 		{
 			"type": "vmware-iso",
+			"vm_name": "{{ user `vm_name`}}",
 			"keep_registered": "false",
-			"version": 14,
+			"version": 11,
 			"guest_os_type": "windows9srv-64",
 			"iso_url": "{{ user `iso_url`}}",
 			"iso_checksum": "{{ user `iso_checksum`}}",
 			"iso_checksum_type": "{{ user `iso_checksum_type`}}",
 			"disk_size": 25000,
+			"disk_type_id": 0,
 			"vmx_data": {
 				"memsize": 2048,
 				"numvcpus": 2,
@@ -35,20 +45,29 @@
 			"shutdown_timeout": "15m"
 		}
 	],
-	"provisioners": [
-
-	],
+	"provisioners": [],
 	"post-processors": [
-		{
-			"type" : "vsphere",
-			"cluster" : "ILAB Cluster 01",
-			"datacenter" : "ILAB",
-			"datastore" : "vsanDatastore",
-			"host" : "lavvc1",
-			"password" : "BuildM3Up!",
-			"username" : "infra-packer",
-			"vm_name" : "smtemplate",
-			"insecure" : "true"
-		  }
+		[
+			{
+				"type": "vsphere",
+				"vm_name": "{{ user `vm_name`}}",
+				"host": "{{ user `vsphere_host`}}",
+				"insecure": "{{ user `vsphere_insecure`}}",
+				"username": "{{ user `vsphere_user`}}",
+				"password": "{{ user `vsphere_pass`}}",
+				"datacenter": "{{ user `vsphere_datacenter`}}",
+				"cluster": "{{ user `vsphere_cluster`}}",
+				"datastore": "{{ user `vsphere_datastore`}}",
+				"vm_folder": "{{ user `vsphere_folder`}}",
+				"vm_network": "{{ user `vsphere_network`}}"
+			},
+			{
+				"type": "vsphere-template",
+				"host": "{{ user `vsphere_host`}}",
+				"insecure": "{{ user `vsphere_insecure`}}",
+				"username": "{{ user `vsphere_user`}}",
+				"password": "{{ user `vsphere_pass`}}"
+			 }
+		]
 	]
 }

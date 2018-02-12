@@ -3,6 +3,6 @@
 *.clg
 *.rendered.json
 iso/*.iso
-output-virtualbox-iso
+output-*/**
 packer-cache
 debug_artifacts
