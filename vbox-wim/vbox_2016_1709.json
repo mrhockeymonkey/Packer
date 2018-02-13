@@ -1,21 +1,22 @@
 {
 	"variables": {
-		"vm_name": "windows_10_ent_x64_{{timestamp}}",
+		"vm_name": "server_2016_1709_{{isotime \"20060102\"}}",
 		"vm_user": "Administrator",
-		"vm_pass": "Pa$$w0rd",
-		"iso_url": "D:/Packer/iso/en-gb_windows_10_enterprise_version_1607_updated_jan_2017_x64_dvd_9714391.iso",
-		"iso_checksum": "E2B75A24CD9D953056D8AA09982C4281"
+		"vm_pass": "build",
+		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",
+		"iso_checksum": "3B93DBC1C13A223B543483F0DCB52587",
+		"iso_checksum_type": "md5"
 	},
 	"builders": [
 		{
 			"type": "virtualbox-iso",
 			"vm_name": "{{ user `vm_name`}}",
 			"keep_registered": "false",
-			"guest_os_type": "Windows10_64",
+			"guest_os_type": "Windows2016_64",
 			"guest_additions_mode": "disable",
 			"iso_url": "{{ user `iso_url`}}",
 			"iso_checksum": "{{ user `iso_checksum`}}",
-			"iso_checksum_type": "md5",
+			"iso_checksum_type": "{{ user `iso_checksum_type`}}",
 			"disk_size": 25000,
 			"vboxmanage": [
 				[
@@ -32,7 +33,7 @@
 				]
 			],
 			"floppy_files": [
-				"answer/win_10/Autounattend.xml",
+				"answer/2016_1709/Autounattend.xml",
 				"scripts/floppy/FirstLogonSetup.ps1",
 				"scripts/floppy/SysPrep.bat"
 			],
@@ -58,7 +59,7 @@
 			"script": "scripts/provisioning/InstallPSModules.ps1",
 			"environment_vars": [
 				"RequiredProviders=Nuget;PowerShellGet",
-				"RequiredModules=PSWindowsUpdate"
+				"RequiredModules=PSWindowsUpdate;Pester;PSake"
 			]
 		},
 		{
@@ -71,7 +72,6 @@
 			"type": "windows-restart",
 			"restart_timeout": "20m"
 		},
-		{% block apps %}{% endblock %}
 		{
 			"type": "powershell",
 			"script": "scripts/provisioning/InstallWindowsUpdates.ps1",
@@ -86,25 +86,17 @@
 	"post-processors": [
 		[
 			{
-				"type": "artifice",
-				"files": [
-					"output-virtualbox-iso/{{user `vm_name`}}-disk1.vmdk"
-				]
+				"type": "manifest",
+				"output": "output-virtualbox-iso/manifest.json"
 			},
 			{
 				"type": "shell-local",
-				"execute_command": "{{.Script}} -Artifact {{.Artifact}} -Format VHD",
+				"execute_command": "{{.Script}} -Manifest output-virtualbox-iso/manifest.json -Format VHD",
 				"script": "scripts/postprocessing/CloneVirtualDisk.ps1"
 			},
 			{
-				"type": "artifice",
-				"files": [
-					"output-virtualbox-iso/{{user `vm_name`}}-disk1.vhd"
-				]
-			},
-			{
 				"type": "shell-local",
-				"execute_command": "{{.Script}} -Artifact {{.Artifact}}",
+				"execute_command": "{{.Script}} -Manifest output-vmware-iso/manifest.json",
 				"script": "scripts/postprocessing/CaptureWindowsImage.ps1"
 			}
 		]

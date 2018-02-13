@@ -1,6 +1,6 @@
 {
 	"variables": {
-		"vm_name": "tmplt-2016-1709",
+		"vm_name": "tmplt-2016-1709-{{isotime \"20060102\"}}",
 		"vm_user": "Administrator",
 		"vm_pass": "build",
 		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",

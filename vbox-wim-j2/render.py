@@ -9,8 +9,7 @@ import jinja2
 import subprocess
 
 #Define some variables
-script_path = os.path.dirname(os.path.abspath(__file__))
-template_folder = os.path.join(script_path, 'templates')
+template_folder = os.path.dirname(os.path.abspath(__file__))
 template_files = ['win_10_standard.json', 'win_10_developer.json']
 serverbuilds = ['generic','appserver']
 apps = {

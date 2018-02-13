@@ -1,6 +1,6 @@
 {
 	"variables": {
-		"vm_name": "server_2012_r2_x64_{{timestamp}}",
+		"vm_name": "server_2012_r2_x64_{{isotime \"20060102\"}}",
 		"vm_user": "Administrator",
 		"vm_pass": "Pa$$w0rd",
 		"iso_url": "iso/en_windows_server_2016_x64_dvd_9327751.iso",
@@ -9,8 +9,9 @@
 	"builders": [
 		{
 			"type": "virtualbox-iso",
+			"vm_name": "{{ user `vm_name`}}",
 			"keep_registered": "false",
-			"guest_os_type": "Windows2012_64",
+			"guest_os_type": "Windows2016_64",
 			"guest_additions_mode": "disable",
 			"iso_url": "{{ user `iso_url`}}",
 			"iso_checksum": "{{ user `iso_checksum`}}",
@@ -32,14 +33,15 @@
 			],
 			"floppy_files": [
 				"answer/2016/Autounattend.xml",
-				"scripts/floppy/FirstLogonSetup.ps1"
+				"scripts/floppy/FirstLogonSetup.ps1",
+				"scripts/floppy/SysPrep.bat"
 			],
 			"boot_wait": "15s",
 			"communicator": "winrm",
 			"winrm_timeout": "4h",
 			"winrm_username": "{{ user `vm_user`}}",
 			"winrm_password": "{{ user `vm_pass`}}",
-			"shutdown_command": "C:/windows/system32/shutdown.exe -s -t 0",
+			"shutdown_command": "A:/SysPrep.bat",
 			"shutdown_timeout": "15m",
 			"post_shutdown_delay": "30s"
 		}
@@ -83,25 +85,17 @@
 	"post-processors": [
 		[
 			{
-				"type": "artifice",
-				"files": [
-					"{{user `vm_name`}}-disk1.vmdk"
-				]
+				"type": "manifest",
+				"output": "output-virtualbox-iso/manifest.json"
 			},
 			{
 				"type": "shell-local",
-				"execute_command": "{{.Script}} -Artifact {{.Artifact}} -Format VHD",
+				"execute_command": "{{.Script}} -Manifest output-virtualbox-iso/manifest.json -Format VHD",
 				"script": "scripts/postprocessing/CloneVirtualDisk.ps1"
 			},
 			{
-				"type": "artifice",
-				"files": [
-					"{{user `vm_name`}}-disk1.vhd"
-				]
-			},
-			{
 				"type": "shell-local",
-				"execute_command": "{{.Script}} -Artifact {{.Artifact}}",
+				"execute_command": "{{.Script}} -Manifest output-vmware-iso/manifest.json",
 				"script": "scripts/postprocessing/CaptureWindowsImage.ps1"
 			}
 		]

@@ -22,7 +22,7 @@
 [CmdletBinding()]
 Param (
 	[Parameter (Mandatory = $true)]
-	[String]$Artifact,
+	[String]$Manifest,
 
 	[Parameter (Mandatory = $true)]
 	[ValidateSet ('VDI','VMDK','VHD','RAW')]
@@ -30,10 +30,13 @@ Param (
 )
 
 Try {
+	#Read manifest
+	$ManifestData = Get-Content -Path $Manifest -Raw | ConvertFrom-Json
+	$Vmdk = Get-Item -Path $($ManifestData.builds.files | Select-Object -Expand Name | Where-Object {$_ -like "*.vmdk"})
+	
 	#Get the artifact and and define what we need
-	$SourceFile = Get-Item $Artifact -ErrorAction Stop
 	$VBoxManage = "$env:ProgramFiles\Oracle\VirtualBox\VBoxManage.exe"
-	$TargetPath = "$($SourceFile.Directory.FullName)\$($SourceFile.BaseName).$($Format.ToLower())"
+	$TargetPath = "$($Vmdk.Directory.FullName)\$($Vmdk.BaseName).$($Format.ToLower())"
 
 	#Remove any old artifacts from previous runs
 	If (Test-Path $TargetPath) {
@@ -42,8 +45,8 @@ Try {
 	}
 
 	#Clone to specified format using VBoxManage.exe
-	Write-Host "Invoking: VBoxManage.exe clonemedium $($SourceFile.Name) $($TargetPath | Split-Path -Leaf) --format $Format"
-	& $VBoxManage clonemedium $SourceFile.FullName $TargetPath --format $Format
+	Write-Host "Invoking: VBoxManage.exe clonemedium $($Vmdk.Name) $($TargetPath | Split-Path -Leaf) --format $Format"
+	& $VBoxManage clonemedium $Vmdk.FullName $TargetPath --format $Format
 }
 Catch {
 	Write-Warning $_.Exception.Message

@@ -1,0 +1,22 @@
+{
+	"Builders": [
+		{
+			"type": "file",
+			"source": "manifest.json",
+			"target": "output-vmware-iso/dummy_artifact"
+		}
+	],
+	"post-processors": [
+		[
+			{
+				"type": "manifest",
+				"output": "manifest.json"
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Manifest output-vmware-iso/manifest.json",
+				"script": "scripts/postprocessing/ConvertVirtualDisk.ps1"
+			}
+		]
+	]
+}

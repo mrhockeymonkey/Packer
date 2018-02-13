@@ -1,4 +1,4 @@
-# VMWare Workstation Pro to Windows Image File
+# VMWare Workstation Pro to WIM Build
 Use VMWare Workstation Pro to build Windows and then create a Windows Image (.wim)
 
 ```cmd

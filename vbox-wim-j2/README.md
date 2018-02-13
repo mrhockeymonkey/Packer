@@ -1,0 +1,2 @@
+# Dynamically Rendered Templates
+Packer templates are built on jinja. So taking this idea one step further I decided to try rendering packer templates on the fly using Jinja. The benefit of doing this is making templates reuable. In this repo is an example of how to layer in different software for different images you wante created but you could also do the same for post-processing to get identical ready for multiple platforms. 

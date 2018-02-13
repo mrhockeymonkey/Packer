@@ -14,25 +14,29 @@
 		}
 
 	.NOTES
-	This assume you have copied powershell.exe to sh.exe to make shell-local useable on windows
+	This assume you have copied powershell.exe to sh.exe to make shell-local useable on windows!
 	Microsoft Virtual Machine Converter 3.0: https://www.microsoft.com/en-us/download/details.aspx?id=42497
 #>
 
 [CmdletBinding()]
 Param (
 	[Parameter (Mandatory = $true)]
-	[String]$Artifact
+	[String]$Manifest
 )
+
+$ErrorActionPreference = 'Stop'
 
 Try {
 	Import-Module "C:\Program Files\Microsoft Virtual Machine Converter\MvmcCmdlet.psd1"
 	
-	#Get the artifact and and define what we need
-	$SourceFile = Get-Item $Artifact -ErrorAction Stop
-	$TargetPath = "$($SourceFile.Directory.FullName)\$($SourceFile.BaseName)"
-
-	#Clone to specified format using VBoxManage.exe
-	ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $SourceFile -DestinationLiteralPath $TargetPath -VhdType DynamicHardDisk -VhdFormat Vhd
+	#Read manifest
+	$ManifestData = Get-Content -Path $Manifest -Raw | ConvertFrom-Json
+	$Vmdk = Get-Item -Path $($ManifestData.builds.files | Select-Object -Expand Name | Where-Object {$_ -like "*.vmdk"})
+	$Dest = "$($Vmdk.Directory.FullName)"
+	
+	#Convert
+	Write-Output "Converting $($Vmdk.FullName)"
+	ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $Vmdk -DestinationLiteralPath $Dest -VhdType DynamicHardDisk -VhdFormat Vhd
 }
 Catch {
 	Write-Warning $_.Exception.Message

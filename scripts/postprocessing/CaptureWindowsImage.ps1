@@ -15,20 +15,27 @@
 		}
 
 	.NOTES
-	This assume you have copied powershell.exe to sh.exe to make shell-local useable on windows
+	This assume you have copied powershell.exe to sh.exe to make shell-local useable on windows!
+	This also assumes you have already conveted any VMDKs in the manifest into in VHDs
 #>
 
 [CmdletBinding()]
 Param (
 	[Parameter (Mandatory = $true)]
-	[String]$Artifact
+	[String]$Manifest
 )
 
+$ErrorActionPreference = 'Stop'
+
 Try {
-	#Get the artifact, create a folder to mount to and define ImagePath
-	$SourceFile = Get-Item $Artifact -ErrorAction Stop
-	$MountDir = New-Item -Path $SourceFile.Directory.FullName -Name 'MountDir' -ItemType Directory -ErrorAction Stop
-	$ImagePath = "$($SourceFile.Directory.FullName)\$($SourceFile.BaseName).wim"
+	#Read manifest data
+	$ManifestData = Get-Content -Path $Manifest -Raw | ConvertFrom-Json
+	$Vmdk = Get-Item -Path $($ManifestData.builds.files | Select-Object -Expand Name | Where-Object {$_ -like "*.vmdk"})
+	$Vhd = Get-Item -Path $($Vmdk.FullName -replace ".vmdk",".vhd")
+	
+	#Create a folder to mount to and define ImagePath
+	$MountDir = New-Item -Path $Vhd.Directory.FullName -Name 'MountDir' -ItemType Directory -ErrorAction Stop
+	$ImagePath = "$($Vhd.Directory.FullName)\$($Vhd.BaseName).wim"
 
 	#Remove any old artifacts from previous runs
 	If (Test-Path $ImagePath) {
@@ -37,12 +44,12 @@ Try {
 	}
 
 	#Mount the virtual disk file
-	Write-Host "Mounting $($SourceFile.FullName)..."
-	Mount-WindowsImage -ImagePath $Artifact -Path $MountDir.FullName -Index 1 -ErrorAction Stop | Out-Null
+	Write-Host "Mounting $($Vhd.FullName)..."
+	Mount-WindowsImage -ImagePath $Vhd.FullName -Path $MountDir.FullName -Index 1 -ErrorAction Stop | Out-Null
 
 	#Create a new windows image file
 	Write-Host "Capturing windows image. This may take some time..."
-	New-WindowsImage -Name $SourceFile.BaseName -ImagePath $ImagePath -CapturePath $MountDir.FullName -Verify -ErrorAction Stop
+	New-WindowsImage -Name $Vhd.BaseName -ImagePath $ImagePath -CapturePath $MountDir.FullName -Verify -ErrorAction Stop
 }
 Catch {
 	Write-Warning $_.Exception.Message
@@ -50,7 +57,7 @@ Catch {
 }
 Finally {
 	#Dismount and remove directory
-	Write-Host "Dismounting $($SourceFile.FullName)"
+	Write-Host "Dismounting $($Vhd.FullName)"
 	Dismount-WindowsImage -Path $MountDir.FullName -Discard -ErrorAction SilentlyContinue | Out-Null
 	$MountDir | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
 }

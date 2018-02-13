@@ -1,6 +1,6 @@
 {
 	"variables": {
-		"vm_name": "server_2016_1709_{{timestamp}}",
+		"vm_name": "server_2016_1709_{{isotime \"20060102\"}}",
 		"vm_user": "Administrator",
 		"vm_pass": "build",
 		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",
@@ -10,6 +10,7 @@
 	"builders": [
 		{
 			"type": "virtualbox-iso",
+			"vm_name": "{{ user `vm_name`}}",
 			"keep_registered": "false",
 			"guest_os_type": "Windows2016_64",
 			"guest_additions_mode": "disable",

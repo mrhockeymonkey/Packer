@@ -1,6 +1,6 @@
 {
 	"variables": {
-		"vm_name": "server_2016_1709_{{timestamp}}",
+		"vm_name": "server_2016_1709_{{isotime \"20060102\"}}",
 		"vm_user": "Administrator",
 		"vm_pass": "build",
 		"iso_url": "iso/en_windows_server_version_1709_updated_jan_2018_x64_dvd_100492040.iso",
@@ -42,15 +42,18 @@
 	"post-processors": [
 		[
 			{
-				"type": "artifice",
-				"files": [
-					"output-vmware-iso/disk.vmdk"
-				]
+				"type": "manifest",
+				"output": "output-vmware-iso/manifest.json"
 			},
 			{
-				"type":"shell-local",
-				"execute_command": "{{.Script}} -Artifact {{.Artifact}}",
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Manifest output-vmware-iso/manifest.json",
 				"script": "scripts/postprocessing/ConvertVirtualDisk.ps1"
+			},
+			{
+				"type": "shell-local",
+				"execute_command": "{{.Script}} -Manifest output-vmware-iso/manifest.json",
+				"script": "scripts/postprocessing/CaptureWindowsImage.ps1"
 			}
 		]
 	]
