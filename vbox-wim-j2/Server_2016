@@ -151,7 +151,7 @@
 			"elevated_user": "{{ user `admin_user`}}",
 			"elevated_password": "{{ user `admin_pass`}}",
 			"environment_vars": [
-				"WUSERVER=https://wsus.eqld.sites.uberit.net:8531",
+				"WUSERVER=https://wsus.uk.sites.domain.com:8531",
 				"TARGETGROUP=Workstations"
 			]
 		},
@@ -165,7 +165,7 @@
 			"elevated_user": "{{ user `admin_user`}}",
 			"elevated_password": "{{ user `admin_pass`}}",
 			"environment_vars": [
-				"WUSERVER=https://wsus.eqld.sites.uberit.net:8531",
+				"WUSERVER=https://wsus.uk.sites.domain.com:8531",
 				"TARGETGROUP=Workstations"
 			]
 		},
